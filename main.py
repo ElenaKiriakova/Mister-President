@@ -42,8 +42,16 @@ def run_game():
             if keys[pygame.K_SPACE]:
                 isJump = True
         else:
-            
+            if jumpCount >= -10:
+                if jumpCount < 0:
+                    y += (jumpCount ** 2) / 2
+                else:
+                    y -= (jumpCount**2)/2 #Делим на 2, чтобы игрок не слишком высоко прыгнул
+                jumpCount -= 1
 
+            else:
+                isJump = False
+                jumpCount = 10
 
         # Чтобы за игроком не оставались старые спрайты, вводим функцию заполнения экрана фоновым цветом
         win.fill((0,0,0))
