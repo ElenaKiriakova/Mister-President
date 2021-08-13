@@ -22,6 +22,7 @@ def run_game():
     isJump = False #прыгает игрок или нет
     jumpCount = 10
 
+    lastMove = "right"
 
     left = False #игрок перемещается влево
     right = False # игрок перемещается вправо
@@ -36,6 +37,21 @@ def run_game():
 
     bg = pygame.image.load('images/bg.jpg')
     playerStand = pygame.image.load('images/idle.png') #Изображение когда игрок стоит
+
+
+    class Snaryad():
+        def __init__(self, x, y, radius, color,facing): #facing - показывает в какую сторону полетит снаряд
+            self.x = x
+            self.y = y
+            self.radius = radius
+            self.color = color
+            self.facing = facing
+            self.vel = 8 * facing # Скорость снаряда
+
+        def draw(self, win):
+            pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
+
+
 
     def draw_window():
         global animCount # Если не вызвать эту переменную, как глобальную, то функция создаст свою локальную переменную
@@ -55,7 +71,8 @@ def run_game():
         else:
             win.blit(playerStand, (x, y))
 
-
+        for bullet in bullets:
+            bullet.draw(win)
         # функции в качестве параметров передается пверхность,
         # поскольку выбран draw (квадрат), цвет в формате rgb и параментры
         # расположение х и у ширина и высота
@@ -64,6 +81,7 @@ def run_game():
         # Экран нужно постоянно обновлять
         pygame.display.update()
 
+    bullets =[] #Список обьектов класса Snaryad
 
     run = True
 
@@ -73,19 +91,37 @@ def run_game():
             if event.type == pygame.QUIT:
                 run = False
 
+        for bullet in bullets:
+            if bullet.x < 500 and bullet.x > 0:
+                bullet.x += bullet.vel
+            else:
+                bullets.pop(bullets.index(bullet))
 
 
         # Создаем список в который положим все нажатые кнопки, чтобы их можно было отследить
         keys = pygame.key.get_pressed()
+
+
+        if keys[pygame.K_f]:
+            if lastMove == "right":
+                facing = 1
+            else:
+                facing = -1
+
+            if len(bullets) < 5:
+                bullets.append(Snaryad(round(x + width//2), round(y + height//2), 5, (255, 0, 0), facing))
+
         if keys[pygame.K_LEFT] and x > 5: # x > 5 отвечает, чтобы игрок не вышел за край экрана
             x -= speed
             left = True
             right = False
+            lastMove = "left"
 
         elif keys[pygame.K_RIGHT] and x < 500 - width - 5:
             x += speed
             left = False
             right = True
+            lastMove = "right"
         else:
             left = False
             right = False
