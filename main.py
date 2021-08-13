@@ -1,7 +1,7 @@
 import pygame
 from settings import Settings
 from player import Player
-
+from bullets import Snaryad
 
 
 animCount = 0 # на каком фрейме сейчас находится анимация
@@ -38,17 +38,6 @@ def run_game():
     playerStand = pygame.image.load('images/idle.png') #Изображение когда игрок стоит
 
 
-    class Snaryad():
-        def __init__(self, x, y, radius, color,facing): #facing - показывает в какую сторону полетит снаряд
-            self.x = x
-            self.y = y
-            self.radius = radius
-            self.color = color
-            self.facing = facing
-            self.vel = 8 * facing # Скорость снаряда
-
-        def draw(self, win):
-            pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
 
 
 
