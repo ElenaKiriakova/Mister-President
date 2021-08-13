@@ -2,6 +2,7 @@ import pygame
 from settings import Settings
 from player import Player
 from bullets import Snaryad
+import gf as gf
 
 
 animCount = 0 # на каком фрейме сейчас находится анимация
@@ -26,16 +27,7 @@ def run_game():
     left = False #игрок перемещается влево
     right = False # игрок перемещается вправо
 
-    walkRight = [pygame.image.load('images/right_1.png'), pygame.image.load('images/right_2.png'),
-                 pygame.image.load('images/right_3.png'), pygame.image.load('images/right_4.png'),
-                 pygame.image.load('images/right_5.png'), pygame.image.load('images/right_6.png')]
-
-    walkLeft = [pygame.image.load('images/left_1.png'), pygame.image.load('images/left_2.png'),
-                pygame.image.load('images/left_3.png'), pygame.image.load('images/left_4.png'),
-                pygame.image.load('images/left_5.png'), pygame.image.load('images/left_6.png')]
-
     bg = pygame.image.load('images/bg.jpg')
-    playerStand = pygame.image.load('images/idle.png') #Изображение когда игрок стоит
 
 
 
@@ -45,19 +37,19 @@ def run_game():
         global animCount # Если не вызвать эту переменную, как глобальную, то функция создаст свою локальную переменную
 
 
-        win.blit(bg, (0, 0)) #Сначала указывает картинку, потом координаты. Сначала надо прорисовать задний фон, потом уже картинку
+        win.blit(set.bg_image, (0, 0)) #Сначала указывает картинку, потом координаты. Сначала надо прорисовать задний фон, потом уже картинку
 
-        if animCount >= 30: #У нас 30 кадров в секунду каждый спрайт будет идти по 5 кадров(у нас всего 6 спрайтов)
+        if animCount >= set.freim_count: #У нас 30 кадров в секунду каждый спрайт будет идти по 5 кадров(у нас всего 6 спрайтов)
             animCount = 0
 
         if left:
-            win.blit(walkLeft[animCount//5], (pl.x, pl.y))
+            win.blit(pl.walkLeft[animCount//5], (pl.x, pl.y))
             animCount += 1
         elif right:
-            win.blit(walkRight[animCount // 5], (pl.x, pl.y))
+            win.blit(pl.walkRight[animCount // 5], (pl.x, pl.y))
             animCount += 1
         else:
-            win.blit(playerStand, (pl.x, pl.y))
+            win.blit(pl.playerStand, (pl.x, pl.y))
 
         for bullet in bullets:
             bullet.draw(win)
@@ -74,13 +66,14 @@ def run_game():
     run = True
 
     while run:
-        clock.tick(30) #Указываем сколько фреймов в секунду будет в игре
-        for event in pygame.event.get(): # Метод get позволяет получить данные из массива event
+        clock.tick(set.freim_count) #Указываем сколько фреймов в секунду будет в игре
+
+        for event in pygame.event.get():  # Метод get позволяет получить данные из массива event
             if event.type == pygame.QUIT:
                 run = False
 
         for bullet in bullets:
-            if bullet.x < 500 and bullet.x > 0:
+            if bullet.x < set.win_width and bullet.x > 0:
                 bullet.x += bullet.vel
             else:
                 bullets.pop(bullets.index(bullet))
@@ -97,7 +90,8 @@ def run_game():
                 facing = -1
 
             if len(bullets) < 5:
-                bullets.append(Snaryad(round(pl.x + pl.width//2), round(pl.y + pl.height//2), 5, (255, 0, 0), facing))
+
+                bullets.append(Snaryad(round(pl.x + pl.width//2), round(pl.y + pl.height//2), set.radius, set.color, facing))
 
         if keys[pygame.K_LEFT] and pl.x > 5: # x > 5 отвечает, чтобы игрок не вышел за край экрана
             pl.x -= pl.speed
@@ -105,7 +99,7 @@ def run_game():
             right = False
             lastMove = "left"
 
-        elif keys[pygame.K_RIGHT] and pl.x < 500 - pl.width - 5:
+        elif keys[pygame.K_RIGHT] and pl.x < set.win_width - pl.width - 5:
             pl.x += pl.speed
             left = False
             right = True
@@ -123,7 +117,7 @@ def run_game():
                 if jumpCount < 0:
                     pl.y += (jumpCount ** 2) / 2
                 else:
-                    pl.y -= (jumpCount**2)/2 #Делим на 2, чтобы игрок не слишком высоко прыгнул
+                    pl.y -= (jumpCount ** 2) / 2  # Делим на 2, чтобы игрок не слишком высоко прыгнул
                 jumpCount -= 1
 
             else:
