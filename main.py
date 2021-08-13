@@ -1,25 +1,29 @@
 import pygame
+from settings import Settings
+from player import Player
+import gf as gf
+from bullets import Snaryad
+
 animCount = 0 # на каком фрейме сейчас находится анимация
 def run_game():
+
+
     pygame.init()
 
-    # Игровое окно
-    win = pygame.display.set_mode((500, 500))
 
+    pl = Player()
+    set = Settings()
+    #bull = Snaryad(pl.x, pl.y, radius, color, facing)
+
+    # Игровое окно
+    win = pygame.display.set_mode((set.screen_width, set.screen_height))
     # Вывод названия игры
     pygame.display.set_caption("Mister President")
 
     clock = pygame.time.Clock()
 
-    # Данные игрока
-    x = 50
-    width = 60
-    height = 71
-    y = 425 # высота экрана - ширина игрока - "земля"
-
-    speed = 5
-
-    isJump = False #прыгает игрок или нет
+     #прыгает игрок или нет
+    isJump = False
     jumpCount = 10
 
     lastMove = "right"
@@ -36,50 +40,8 @@ def run_game():
                 pygame.image.load('images/left_5.png'), pygame.image.load('images/left_6.png')]
 
     bg = pygame.image.load('images/bg.jpg')
+
     playerStand = pygame.image.load('images/idle.png') #Изображение когда игрок стоит
-
-
-    class Snaryad():
-        def __init__(self, x, y, radius, color,facing): #facing - показывает в какую сторону полетит снаряд
-            self.x = x
-            self.y = y
-            self.radius = radius
-            self.color = color
-            self.facing = facing
-            self.vel = 8 * facing # Скорость снаряда
-
-        def draw(self, win):
-            pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
-
-
-
-    def draw_window():
-        global animCount # Если не вызвать эту переменную, как глобальную, то функция создаст свою локальную переменную
-
-
-        win.blit(bg, (0, 0)) #Сначала указывает картинку, потом координаты. Сначала надо прорисовать задний фон, потом уже картинку
-
-        if animCount >= 30: #У нас 30 кадров в секунду каждый спрайт будет идти по 5 кадров(у нас всего 6 спрайтов)
-            animCount = 0
-
-        if left:
-            win.blit(walkLeft[animCount//5], (x, y))
-            animCount += 1
-        elif right:
-            win.blit(walkRight[animCount // 5], (x, y))
-            animCount += 1
-        else:
-            win.blit(playerStand, (x, y))
-
-        for bullet in bullets:
-            bullet.draw(win)
-        # функции в качестве параметров передается пверхность,
-        # поскольку выбран draw (квадрат), цвет в формате rgb и параментры
-        # расположение х и у ширина и высота
-        #pygame.draw.rect(win, (0, 0, 255), (x, y, width, height))  # функции в качестве параметров передается пверхность
-
-        # Экран нужно постоянно обновлять
-        pygame.display.update()
 
     bullets =[] #Список обьектов класса Snaryad
 
@@ -92,57 +54,15 @@ def run_game():
                 run = False
 
         for bullet in bullets:
-            if bullet.x < 500 and bullet.x > 0:
+            if bullet.x < set.screen_width and bullet.x > 0:
                 bullet.x += bullet.vel
             else:
                 bullets.pop(bullets.index(bullet))
 
 
-        # Создаем список в который положим все нажатые кнопки, чтобы их можно было отследить
-        keys = pygame.key.get_pressed()
+        gf.key_events(lastMove, bullets, pl, set, isJump, jumpCount)
 
-
-        if keys[pygame.K_f]:
-            if lastMove == "right":
-                facing = 1
-            else:
-                facing = -1
-
-            if len(bullets) < 5:
-                bullets.append(Snaryad(round(x + width//2), round(y + height//2), 5, (255, 0, 0), facing))
-
-        if keys[pygame.K_LEFT] and x > 5: # x > 5 отвечает, чтобы игрок не вышел за край экрана
-            x -= speed
-            left = True
-            right = False
-            lastMove = "left"
-
-        elif keys[pygame.K_RIGHT] and x < 500 - width - 5:
-            x += speed
-            left = False
-            right = True
-            lastMove = "right"
-        else:
-            left = False
-            right = False
-            animCount = 0
-
-        if not isJump:
-            if keys[pygame.K_SPACE]:
-                isJump = True
-        else:
-            if jumpCount >= -10:
-                if jumpCount < 0:
-                    y += (jumpCount ** 2) / 2
-                else:
-                    y -= (jumpCount**2)/2 #Делим на 2, чтобы игрок не слишком высоко прыгнул
-                jumpCount -= 1
-
-            else:
-                isJump = False
-                jumpCount = 10
-
-        draw_window()
+        gf.draw_window(win, left, right, walkLeft, walkRight, playerStand, bullets, pl, bg)
 
     pygame.quit() #Если цикл будет равен False то игра автоматически выйдет
 
