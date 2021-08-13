@@ -1,23 +1,22 @@
 import pygame
+from settings import Settings
+from player import Player
+
+
+
 animCount = 0 # на каком фрейме сейчас находится анимация
 def run_game():
     pygame.init()
 
+    set = Settings()
+    pl = Player()
     # Игровое окно
-    win = pygame.display.set_mode((500, 500))
+    win = pygame.display.set_mode((set.win_width, set.win_height))
 
     # Вывод названия игры
     pygame.display.set_caption("Mister President")
 
     clock = pygame.time.Clock()
-
-    # Данные игрока
-    x = 50
-    width = 60
-    height = 71
-    y = 425 # высота экрана - ширина игрока - "земля"
-
-    speed = 5
 
     isJump = False #прыгает игрок или нет
     jumpCount = 10
@@ -63,13 +62,13 @@ def run_game():
             animCount = 0
 
         if left:
-            win.blit(walkLeft[animCount//5], (x, y))
+            win.blit(walkLeft[animCount//5], (pl.x, pl.y))
             animCount += 1
         elif right:
-            win.blit(walkRight[animCount // 5], (x, y))
+            win.blit(walkRight[animCount // 5], (pl.x, pl.y))
             animCount += 1
         else:
-            win.blit(playerStand, (x, y))
+            win.blit(playerStand, (pl.x, pl.y))
 
         for bullet in bullets:
             bullet.draw(win)
@@ -109,16 +108,16 @@ def run_game():
                 facing = -1
 
             if len(bullets) < 5:
-                bullets.append(Snaryad(round(x + width//2), round(y + height//2), 5, (255, 0, 0), facing))
+                bullets.append(Snaryad(round(pl.x + pl.width//2), round(pl.y + pl.height//2), 5, (255, 0, 0), facing))
 
-        if keys[pygame.K_LEFT] and x > 5: # x > 5 отвечает, чтобы игрок не вышел за край экрана
-            x -= speed
+        if keys[pygame.K_LEFT] and pl.x > 5: # x > 5 отвечает, чтобы игрок не вышел за край экрана
+            pl.x -= pl.speed
             left = True
             right = False
             lastMove = "left"
 
-        elif keys[pygame.K_RIGHT] and x < 500 - width - 5:
-            x += speed
+        elif keys[pygame.K_RIGHT] and pl.x < 500 - pl.width - 5:
+            pl.x += pl.speed
             left = False
             right = True
             lastMove = "right"
@@ -133,9 +132,9 @@ def run_game():
         else:
             if jumpCount >= -10:
                 if jumpCount < 0:
-                    y += (jumpCount ** 2) / 2
+                    pl.y += (jumpCount ** 2) / 2
                 else:
-                    y -= (jumpCount**2)/2 #Делим на 2, чтобы игрок не слишком высоко прыгнул
+                    pl.y -= (jumpCount**2)/2 #Делим на 2, чтобы игрок не слишком высоко прыгнул
                 jumpCount -= 1
 
             else:
