@@ -2,11 +2,13 @@ import pygame
 from settings import Settings
 from player import Player
 from bullets import Snaryad
-import gf as gf
+import game_functions as gf
 
 
-animCount = 0 # на каком фрейме сейчас находится анимация
+
+
 def run_game():
+
     pygame.init()
 
     set = Settings()
@@ -27,50 +29,13 @@ def run_game():
     left = False #игрок перемещается влево
     right = False # игрок перемещается вправо
 
-    bg = pygame.image.load('images/bg.jpg')
-
-
-
-
-
-    def draw_window():
-        global animCount # Если не вызвать эту переменную, как глобальную, то функция создаст свою локальную переменную
-
-
-        win.blit(set.bg_image, (0, 0)) #Сначала указывает картинку, потом координаты. Сначала надо прорисовать задний фон, потом уже картинку
-
-        if animCount >= set.freim_count: #У нас 30 кадров в секунду каждый спрайт будет идти по 5 кадров(у нас всего 6 спрайтов)
-            animCount = 0
-
-        if left:
-            win.blit(pl.walkLeft[animCount//5], (pl.x, pl.y))
-            animCount += 1
-        elif right:
-            win.blit(pl.walkRight[animCount // 5], (pl.x, pl.y))
-            animCount += 1
-        else:
-            win.blit(pl.playerStand, (pl.x, pl.y))
-
-        for bullet in bullets:
-            bullet.draw(win)
-        # функции в качестве параметров передается пверхность,
-        # поскольку выбран draw (квадрат), цвет в формате rgb и параментры
-        # расположение х и у ширина и высота
-        #pygame.draw.rect(win, (0, 0, 255), (x, y, width, height))  # функции в качестве параметров передается пверхность
-
-        # Экран нужно постоянно обновлять
-        pygame.display.update()
 
     bullets =[] #Список обьектов класса Snaryad
 
-    run = True
-
-    while run:
+    while True:
         clock.tick(set.freim_count) #Указываем сколько фреймов в секунду будет в игре
 
-        for event in pygame.event.get():  # Метод get позволяет получить данные из массива event
-            if event.type == pygame.QUIT:
-                run = False
+        gf.check_events()
 
         for bullet in bullets:
             if bullet.x < set.win_width and bullet.x > 0:
@@ -124,9 +89,7 @@ def run_game():
                 isJump = False
                 jumpCount = 10
 
-        draw_window()
-
-    pygame.quit() #Если цикл будет равен False то игра автоматически выйдет
+        gf.draw_window(set, win, left, right, pl, bullets)
 
 
 run_game()
