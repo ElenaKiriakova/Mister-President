@@ -19,10 +19,6 @@ def run_game():
 
     clock = pygame.time.Clock()
 
-    # прыгает игрок или нет
-
-
-
     while True:
         clock.tick(set.freim_count) #Указываем сколько фреймов в секунду будет в игре
         gf.check_events()

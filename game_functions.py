@@ -10,9 +10,8 @@ lastMove = "right"
 left = False #игрок перемещается влево
 right = False # игрок перемещается вправо
 
-#keys = pygame.key.get_pressed()
-
 def check_events():
+    """Функция, отвечающая за закрытие окна"""
 
     for event in pygame.event.get():  # Метод get позволяет получить данные из массива event
         if event.type == pygame.QUIT:
@@ -20,6 +19,7 @@ def check_events():
 
 
 def check_key_events(keys, pl, Snaryad, set):
+    """События клавиш"""
     global lastMove
     global bullets
     global left
@@ -55,6 +55,7 @@ def check_key_events(keys, pl, Snaryad, set):
 
 
 def draw_window(set, win, pl):
+    """Функция обновления эерана игры"""
     global bullets
     global left
     global right
@@ -82,6 +83,7 @@ def draw_window(set, win, pl):
 
 
 def pl_jump(keys, pl):
+    """Инициализирует прыжки игрока"""
     global isJump
     global jumpCount
 
@@ -101,6 +103,7 @@ def pl_jump(keys, pl):
             jumpCount = 10
 
 def fire_bullets(set):
+    """Функция, отвечающая за выстрелы игрока"""
     global bullets
     for bullet in bullets:
         if bullet.x < set.win_width and bullet.x > 0:
