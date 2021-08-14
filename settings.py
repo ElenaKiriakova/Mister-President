@@ -14,3 +14,6 @@ class Settings(Player):
         self.color = (255, 0, 0)
 
         self.bg_image = pygame.image.load('images/bg.jpg')
+
+        # Параметры прыжка
+        self.jumpCount = 10

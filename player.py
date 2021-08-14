@@ -17,18 +17,12 @@ class Player():
 
         self.playerStand = pygame.image.load('images/idle.png')
 
-    def Jumping(self, isJump, keys, jumpCount):
-        if not isJump:
-            if keys[pygame.K_SPACE]:
-                isJump = True
-        else:
-            if jumpCount >= -10:
-                if jumpCount < 0:
-                    self.y += (jumpCount ** 2) / 2
-                else:
-                    self.y -= (jumpCount ** 2) / 2  # Делим на 2, чтобы игрок не слишком высоко прыгнул
-                jumpCount -= 1
+        # Флаг перемещения
+        self.moving_right = False
+        self.moving_left = False
 
-            else:
-                isJump = False
-                jumpCount = 10
+    def update(self):
+        if self.moving_right:
+            self.x += self.speed
+        if self.moving_left:
+            self.x -= self.speed
